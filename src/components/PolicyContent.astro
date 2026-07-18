@@ -1,0 +1,131 @@
+---
+import type { ShopPolicy } from '~/lib/types';
+
+interface Props {
+  policy: ShopPolicy | null;
+  /** ポリシー未設定（null）のときに見出しとして表示するテキスト */
+  fallbackTitle: string;
+}
+
+const { policy, fallbackTitle } = Astro.props;
+const displayTitle = policy?.title ?? fallbackTitle;
+---
+
+<main class="policy-page">
+  <nav class="policy-page__breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="/">ホーム</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{displayTitle}</li>
+    </ol>
+  </nav>
+
+  <article class="policy-page__content">
+    <h1 class="policy-page__title">{displayTitle}</h1>
+
+    {
+      policy?.body ? (
+        <div class="policy-page__body" set:html={policy.body} />
+      ) : (
+        <p class="policy-page__empty">現在準備中です。</p>
+      )
+    }
+  </article>
+</main>
+
+<style lang="scss">
+  .policy-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+
+    &__breadcrumb {
+      margin-bottom: 24px;
+
+      ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        color: #888;
+      }
+
+      a {
+        color: #555;
+        text-decoration: none;
+        text-underline-offset: 2px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &__title {
+      margin: 0 0 24px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    &__body {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: #333;
+
+      :global(h2) {
+        margin: 32px 0 12px;
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      :global(h3) {
+        margin: 24px 0 8px;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      :global(p) {
+        margin: 0 0 16px;
+      }
+
+      :global(ul),
+      :global(ol) {
+        margin: 0 0 16px;
+        padding-left: 1.5em;
+      }
+
+      :global(li) {
+        margin: 0 0 6px;
+      }
+
+      :global(a) {
+        color: #1a0dab;
+        text-underline-offset: 2px;
+      }
+
+      :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 16px;
+      }
+
+      :global(th),
+      :global(td) {
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+    }
+
+    &__empty {
+      color: #666;
+      font-size: 0.95rem;
+    }
+  }
+</style>

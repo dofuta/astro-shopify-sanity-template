@@ -1,0 +1,18 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import PolicyContent from '~/components/PolicyContent.astro';
+import { getShopPolicies } from '~/lib/shopify';
+import { DEFAULT_LOCALE } from '~/lib/i18n';
+import '~/styles/global.scss';
+
+const { privacyPolicy } = await getShopPolicies(DEFAULT_LOCALE);
+
+const fallbackTitle = 'プライバシーポリシー';
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `${privacyPolicy?.title ?? fallbackTitle} | ${siteTitle}`;
+const description = `${privacyPolicy?.title ?? fallbackTitle}のページです。`;
+---
+
+<Layout title={title} description={description} shopifyPageType="policy" shopifyResourceId={privacyPolicy?.id}>
+  <PolicyContent policy={privacyPolicy} fallbackTitle={fallbackTitle} />
+</Layout>

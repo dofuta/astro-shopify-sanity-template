@@ -1,0 +1,86 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Navbar from '~/components/Navbar.astro';
+import Footer from '~/components/Footer.astro';
+import ProductCard from '~/components/ProductCard.astro';
+import { getAllProducts } from '~/lib/shopify';
+import '~/styles/global.scss';
+
+const products = await getAllProducts();
+
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `商品一覧 | ${siteTitle}`;
+const description = '商品一覧ページです。';
+---
+
+<Layout title={title} description={description} shopifyPageType="collection">
+  <main class="products-page">
+    <div class="products-page__header">
+      <h1 class="products-page__heading">商品一覧</h1>
+      <p class="products-page__count">{products.length}件</p>
+    </div>
+
+    {
+      products.length === 0 ? (
+        <p class="products-page__empty">現在、表示できる商品がありません。</p>
+      ) : (
+        <ul class="products-page__grid">
+          {products.map((product) => (
+            <li>
+              <ProductCard product={product} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</Layout>
+
+<style lang="scss">
+  .products-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px 64px;
+
+    &__header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    &__heading {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    &__count {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    &__empty {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    &__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+
+      @media (min-width: 640px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @media (min-width: 1024px) {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  }
+</style>

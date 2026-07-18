@@ -1,0 +1,17 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Navbar from '~/components/Navbar.astro';
+import Footer from '~/components/Footer.astro';
+import { Cart as CartSection } from '~/components/Cart';
+import '~/styles/global.scss';
+
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `カート | ${siteTitle}`;
+const description = 'ショッピングカートです。';
+---
+
+<Layout title={title} description={description} shopifyPageType="cart">
+  <main>
+    <CartSection client:only="react" />
+  </main>
+</Layout>

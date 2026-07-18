@@ -1,0 +1,18 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import PolicyContent from '~/components/PolicyContent.astro';
+import { getShopPolicies } from '~/lib/shopify';
+import { DEFAULT_LOCALE } from '~/lib/i18n';
+import '~/styles/global.scss';
+
+const { legalNotice } = await getShopPolicies(DEFAULT_LOCALE);
+
+const fallbackTitle = '特定商取引法に基づく表記';
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `${legalNotice?.title ?? fallbackTitle} | ${siteTitle}`;
+const description = `${legalNotice?.title ?? fallbackTitle}のページです。`;
+---
+
+<Layout title={title} description={description} shopifyPageType="policy" shopifyResourceId={legalNotice?.id}>
+  <PolicyContent policy={legalNotice} fallbackTitle={fallbackTitle} />
+</Layout>

@@ -1,0 +1,32 @@
+---
+import Navbar from "~/components/Navbar.astro";
+import Layout from "~/layouts/Layout.astro";
+import Top from "~/components/Top.astro";
+import Footer from "~/components/Footer.astro";
+import "~/styles/global.scss";
+
+---
+
+<Layout
+  title="WEB PROJECT"
+  description="This is a test project."
+>
+  <main>
+    <Top/>
+  </main>
+</Layout>
+
+<style lang="scss">
+  #container {
+    height: 100vh;
+    height: 100svh;
+    overflow: scroll;
+    overflow-x: hidden;
+    position: relative;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

@@ -1,0 +1,188 @@
+@use 'reset' as *;
+
+html {
+  background: transparent;
+  font-weight: 500;
+  letter-spacing: 0.03rem;
+  color: $text-primary;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  body {
+    overscroll-behavior: none;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0.08rem;
+    line-height: 1.6;
+  }
+  a {
+    &:hover {
+      @include mobile {
+        opacity: 1;
+      }
+    }
+  }
+  .only_sp {
+    display: none;
+    @include mobile {
+      display: block;
+    }
+  }
+  .only_pc {
+    display: block;
+    @include mobile {
+      display: none;
+    }
+  }
+  ::selection {
+    background-color: $background-primary;
+    color: $text-primary;
+  }
+}
+
+/* ==============================
+   gsap
+   ============================== */
+
+.pin-spacer {
+  pointer-events: none; /* すべてのポインターイベントを無効化 */
+  * {
+    pointer-events: auto;
+  }
+}
+
+/* ==============================
+   Animation Keyframes
+   ============================== */
+
+@keyframes icon {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  25% {
+    transform: scale(0.25);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  75% {
+    transform: scale(0.75);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes icon2 {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  25% {
+    transform: scale(0.25);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(0.75);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(vw_pc(-10)) rotate(-0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInMobile {
+  0% {
+    opacity: 0;
+    transform: translateY(vw_mobile(-10)) rotate(-0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   JavaScript Animation Classes
+   ============================== */
+
+.js-intersection-target-fadein {
+  opacity: 0;
+}
+
+.js-intersection-target-fadein.js-intersection-active {
+  opacity: 1;
+  animation: fadeIn 1s ease-in-out forwards;
+  @include mobile {
+    animation: fadeInMobile 1s ease-in-out forwards;
+  }
+}
+
+.js-intersection-target-img-fadein {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  transition:
+    clip-path 1s cubic-bezier(0.75, 0.01, 0.31, 1),
+    transform 0.6s,
+    width 0.6s,
+    height 0.6s,
+    -webkit-clip-path 1s cubic-bezier(0.75, 0.01, 0.31, 1) !important;
+  transition-delay: 0.6s;
+}
+
+.js-intersection-target-img-fadein.js-intersection-active {
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+/* spanの一文字ずつフェードイン */
+.js-target-first-view {
+  display: inline-block;
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  transition:
+    clip-path 1s cubic-bezier(0.75, 0.01, 0.31, 1),
+    transform 2.5s,
+    width 0.6s,
+    height 0.6s,
+    opacity 2s,
+    -webkit-clip-path 1s cubic-bezier(0.75, 0.01, 0.31, 1);
+  transform: translateY(30px) rotate(8deg);
+  opacity: 0;
+}
+.js-target-first-view.js-first-view-active {
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  transform: translateY(0);
+  opacity: 1;
+}

@@ -1,0 +1,25 @@
+---
+description: ブラウザデバッグ時は phone-log を使う
+globs: src/**/*.{ts,js,tsx,jsx,astro}
+alwaysApply: false
+---
+
+# Browser Debug Logging Rule
+
+- ブラウザ側デバッグでログ送信が必要なときは、`src/scripts/remoteConsole.ts` の仕組みを使う。
+- `src/scripts/*` やコンポーネント内に、固定URL（`localhost` / `127.0.0.1` / 固定ポート）への debug fetch を直書きしない。
+- 有効化はクエリパラメータで行う（`?ingest=1`、無効化は `?ingest=0`）。
+- 送信先を変更する必要がある場合は `ingestUrl` / `ingestHost` / `ingestPort` / `ingestProtocol` を使う。
+- 既定の流れを壊さない: `scripts/log-ingest-server.mjs`（受信） + `scripts/dev-phone.mjs`（起動）を前提にする。
+
+## Example
+
+```ts
+// ✅ Good: remoteConsole の有効化で収集
+// http://<dev-host>:4321/?ingest=1
+```
+
+```ts
+// ❌ Bad: 固定エンドポイントを直書き
+fetch('http://127.0.0.1:7311/debug-log', { method: 'POST' });
+```

@@ -1,0 +1,36 @@
+---
+import { getShopAnalyticsInfo } from '~/lib/shopify';
+import type { ShopifyAnalyticsProduct } from '@shopify/hydrogen-react';
+
+interface Props {
+  pageType?: string;
+  resourceId?: string;
+  canonicalUrl?: string;
+  products?: ShopifyAnalyticsProduct[];
+}
+
+const enabled = import.meta.env.PUBLIC_SHOPIFY_ANALYTICS_ENABLED === 'true';
+const { pageType = 'page', resourceId, canonicalUrl = Astro.url.href, products } = Astro.props;
+const shopInfo = enabled ? await getShopAnalyticsInfo() : null;
+const config = shopInfo
+  ? {
+      ...shopInfo,
+      pageType,
+      resourceId,
+      canonicalUrl,
+      products,
+    }
+  : null;
+const configJson = JSON.stringify(config).replace(/</g, '\\u003c');
+---
+
+{
+  enabled && config && (
+    <>
+      <script id="shopify-analytics-config" type="application/json" is:inline set:html={configJson} />
+      <script>
+        import '~/scripts/shopify/analytics.ts';
+      </script>
+    </>
+  )
+}

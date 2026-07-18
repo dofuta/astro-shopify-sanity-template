@@ -1,0 +1,109 @@
+.price {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.tax {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.optionLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.optionSelect {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background-color: $text-primary;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.variant {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inventory {
+  min-height: 1.4em;
+}
+
+.inventoryStatus {
+  font-size: 0.875rem;
+
+  &[data-status='available'] {
+    color: #2e7d32;
+  }
+
+  &[data-status='sold_out'] {
+    color: #c62828;
+  }
+}
+
+.addToCart {
+  padding: 14px 24px;
+  background-color: #111;
+  color: $text-primary;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #333;
+  }
+
+  &:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+  }
+}
+
+.metafields {
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metafield {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.metafieldLabel {
+  margin: 0;
+  font-weight: 600;
+  color: #555;
+}
+
+.metafieldValue {
+  margin: 0;
+  color: #444;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}

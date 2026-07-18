@@ -1,0 +1,104 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Navbar from '~/components/Navbar.astro';
+import Footer from '~/components/Footer.astro';
+import ProductDetail from '~/components/ProductDetail.astro';
+import { getAllProducts, getProductByHandle } from '~/lib/shopify';
+import '~/styles/global.scss';
+
+export async function getStaticPaths() {
+  const products = await getAllProducts();
+  return products.map((product) => ({
+    params: { handle: product.handle },
+  }));
+}
+
+const { handle } = Astro.params;
+const product = await getProductByHandle(handle);
+
+if (!product) {
+  return Astro.redirect('/products', 301);
+}
+
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `${product.title} | ${siteTitle}`;
+const description = product.descriptionHtml
+  ? product.descriptionHtml.replace(/<[^>]+>/g, '').slice(0, 120)
+  : `${product.title}の詳細ページです。`;
+
+const domain = import.meta.env.BASE_DOMAIN ?? '';
+const ogImage = product.featuredImage?.url ?? `${domain}/images/ogp.png`;
+const firstVariant = product.variants.edges[0]?.node;
+const analyticsProducts = [
+  {
+    productGid: product.id,
+    variantGid: firstVariant?.id,
+    name: product.title,
+    variantName: firstVariant?.title,
+    brand: '',
+    price: firstVariant?.price.amount ?? product.priceRange.minVariantPrice.amount,
+    quantity: 1,
+  },
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  shopifyPageType="product"
+  shopifyResourceId={product.id}
+  shopifyAnalyticsProducts={analyticsProducts}
+>
+  <main class="product-page">
+    <nav class="product-page__breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/products">商品一覧</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">{product.title}</li>
+      </ol>
+    </nav>
+    <ProductDetail product={product} />
+  </main>
+</Layout>
+
+<!-- OGP 画像をオーバーライドするメタタグ -->
+<head>
+  <meta property="og:image" content={ogImage} />
+  <meta name="twitter:image" content={ogImage} />
+</head>
+
+<style lang="scss">
+  .product-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+
+    &__breadcrumb {
+      margin-bottom: 24px;
+
+      ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        color: #888;
+      }
+
+      a {
+        color: #555;
+        text-decoration: none;
+        text-underline-offset: 2px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+</style>

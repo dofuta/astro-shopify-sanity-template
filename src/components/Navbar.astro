@@ -1,0 +1,21 @@
+---
+---
+<div class="navbar">
+    NAVBAR
+</div>
+<style lang="scss">
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        border: 1px solid blue;
+        z-index: 1;
+        background-color: $background-primary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include desktop {
+            height: vw_desktop(50);
+        }
+    }
+</style>
