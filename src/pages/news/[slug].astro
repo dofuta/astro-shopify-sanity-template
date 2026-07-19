@@ -1,0 +1,116 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { loadQuery } from '~/sanity/lib/load-query';
+import { getDraftModeProps } from '~/sanity/lib/draft-mode';
+import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '~/sanity/lib/queries';
+import { portableTextToHtml } from '~/sanity/lib/portable-text';
+import type { NEWS_LIST_QUERY_RESULT, NEWS_DETAIL_QUERY_RESULT } from '../../../sanity.types';
+import '~/styles/global.scss';
+
+export async function getStaticPaths() {
+  const news = await loadQuery<NEWS_LIST_QUERY_RESULT>({ query: NEWS_LIST_QUERY });
+  return news
+    .filter((item) => item.slug)
+    .map((item) => ({ params: { slug: item.slug } }));
+}
+
+const { slug } = Astro.params;
+const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
+const news = await loadQuery<NEWS_DETAIL_QUERY_RESULT>({
+  query: NEWS_DETAIL_QUERY,
+  params: { slug },
+  perspectiveCookie,
+});
+
+if (!news) {
+  return Astro.redirect('/news', 301);
+}
+
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `${news.title ?? 'お知らせ'} | ${siteTitle}`;
+const description = news.title ? `${news.title}の詳細ページです。` : 'お知らせの詳細ページです。';
+const bodyHtml = portableTextToHtml(news.body);
+---
+
+<Layout title={title} description={description}>
+  <main class="news-detail">
+    <nav class="news-detail__breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/news">お知らせ</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">{news.title}</li>
+      </ol>
+    </nav>
+
+    <h1 class="news-detail__title">{news.title}</h1>
+    {
+      news.publishedAt && (
+        <time class="news-detail__date" datetime={news.publishedAt}>
+          {new Date(news.publishedAt).toLocaleDateString('ja-JP')}
+        </time>
+      )
+    }
+    <div class="news-detail__body" set:html={bodyHtml} />
+  </main>
+</Layout>
+
+<style lang="scss">
+  .news-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+
+    &__breadcrumb {
+      margin-bottom: 24px;
+
+      ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        color: #888;
+      }
+
+      a {
+        color: #555;
+        text-decoration: none;
+        text-underline-offset: 2px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &__title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+
+    &__date {
+      display: block;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    &__body {
+      line-height: 1.8;
+
+      :global(p) {
+        margin: 0 0 1.2em;
+      }
+
+      :global(h2, h3, h4) {
+        margin: 1.5em 0 0.6em;
+      }
+    }
+  }
+</style>

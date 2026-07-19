@@ -1,0 +1,103 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { loadQuery } from '~/sanity/lib/load-query';
+import { getDraftModeProps } from '~/sanity/lib/draft-mode';
+import { NEWS_LIST_QUERY } from '~/sanity/lib/queries';
+import type { NEWS_LIST_QUERY_RESULT } from '../../../sanity.types';
+import '~/styles/global.scss';
+
+const { perspectiveCookie } = getDraftModeProps(Astro.cookies);
+const news = await loadQuery<NEWS_LIST_QUERY_RESULT>({
+  query: NEWS_LIST_QUERY,
+  perspectiveCookie,
+});
+
+const siteTitle = import.meta.env.SITE_TITLE ?? 'My Shop';
+const title = `お知らせ一覧 | ${siteTitle}`;
+const description = 'お知らせ一覧ページです。';
+---
+
+<Layout title={title} description={description}>
+  <main class="news-page">
+    <div class="news-page__header">
+      <h1 class="news-page__heading">お知らせ</h1>
+    </div>
+
+    {
+      news.length === 0 ? (
+        <p class="news-page__empty">現在、お知らせはありません。</p>
+      ) : (
+        <ul class="news-page__list">
+          {news.map((item) => (
+            <li>
+              <a class="news-page__link" href={`/news/${item.slug}`}>
+                {item.publishedAt && (
+                  <time class="news-page__date" datetime={item.publishedAt}>
+                    {new Date(item.publishedAt).toLocaleDateString('ja-JP')}
+                  </time>
+                )}
+                <span class="news-page__title">{item.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</Layout>
+
+<style lang="scss">
+  .news-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 16px 64px;
+
+    &__header {
+      margin-bottom: 32px;
+    }
+
+    &__heading {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    &__empty {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    &__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &__link {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+      text-decoration: none;
+      color: inherit;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    &__date {
+      flex-shrink: 0;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    &__title {
+      font-size: 1rem;
+    }
+  }
+</style>

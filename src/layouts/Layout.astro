@@ -3,6 +3,11 @@ import Navbar from '~/components/Navbar.astro'
 import ShopifyAnalytics from '~/components/ShopifyAnalytics.astro';
 import { DEFAULT_LOCALE, LOCALES, type Locale } from '~/lib/i18n';
 import type { ShopifyAnalyticsProduct } from '@shopify/hydrogen-react';
+import { VisualEditing } from '@sanity/astro/visual-editing';
+import { perspectiveCookieName } from '@sanity/preview-url-secret/constants';
+
+// Cookie がある = Sanity の Presentation Tool から Live Preview 中（draft-mode/enable が発行する）
+const draftMode = Astro.cookies.has(perspectiveCookieName);
 
 interface Props {
   title: string;
@@ -27,7 +32,7 @@ const canonicalURL = new URL(Astro.url.pathname, domain);
 const author = import.meta.env.AUTHOR || 'author';
 const themeColor = import.meta.env.THEME_COLOR || "#000000";
 const siteTitle = import.meta.env.SITE_TITLE || 'none';
-const connectSrcBase = "'self' https://*.vimeo.com https://player-telemetry.vimeo.com https://fresnel.vimeocdn.com https://fastly.picsum.photos https://*.vimeocdn.com https://player.vimeo.com https://*.microcms.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://sdk.form.run https://*.shopify.com https://*.myshopify.com https://monorail-edge.shopifysvc.com";
+const connectSrcBase = "'self' https://*.vimeo.com https://player-telemetry.vimeo.com https://fresnel.vimeocdn.com https://fastly.picsum.photos https://*.vimeocdn.com https://player.vimeo.com https://*.api.sanity.io https://*.apicdn.sanity.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://sdk.form.run https://*.shopify.com https://*.myshopify.com https://monorail-edge.shopifysvc.com";
 const connectSrc = import.meta.env.DEV
   ? `${connectSrcBase} http://*:3847 ws://*:3847`
   : connectSrcBase;
@@ -49,7 +54,7 @@ const connectSrc = import.meta.env.DEV
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://*.vimeo.com https://unpkg.com https://fastly.picsum.photos https://*.vimeocdn.com https://player.vimeo.com https://*.googletagmanager.com https://www.googletagmanager.com https://sdk.form.run;
     connect-src ${connectSrc};
     frame-src 'self' https://player.vimeo.com https://*.vimeocdn.com;
-    img-src 'self' data: https://*.vimeocdn.com https://images.microcms-assets.io https://cdn.shopify.com;
+    img-src 'self' data: https://*.vimeocdn.com https://cdn.sanity.io https://cdn.shopify.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
     font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
     media-src 'self' https://*.vimeocdn.com;
@@ -110,6 +115,7 @@ const connectSrc = import.meta.env.DEV
   <body>
     <Navbar path="/products" lang="ja" />
     <slot />
+    <VisualEditing enabled={draftMode} />
     <style is:global lang="scss">
       :root {
       }

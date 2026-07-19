@@ -123,28 +123,3 @@ export interface InventoryResult {
   availableForSale: boolean;
   quantityAvailable: number | null;
 }
-
-// ─── microCMS コンテンツ型（用途に合わせて拡張する） ──────────────────────────
-// SDK の MicroCMSListContent が id / createdAt / updatedAt / publishedAt / revisedAt を保持するため、
-// 各型にはコンテンツ固有のフィールドだけを定義する。
-// 使用例: getMicrocmsList<NewsItem>(...) → (NewsItem & MicroCMSListContent)[]
-
-export interface NewsItem {
-  title: string;
-  body: string;
-  category?: { id: string; name: string };
-}
-
-export interface BannerItem {
-  title: string;
-  image: { url: string; width: number; height: number };
-  link?: string;
-  isExternal?: boolean;
-}
-
-export interface PageContent {
-  title: string;
-  slug: string;
-  body: string;
-  description?: string;
-}
